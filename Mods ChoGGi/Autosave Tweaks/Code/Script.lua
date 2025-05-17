@@ -45,7 +45,6 @@ local function StartupCode()
 	CreateRealTimeThread(function()
 		local city = MainCity
 		while true do
-		print("true doA")
 
 			Sleep(mod_AutosaveInterval)
 			if mod_EnableMod then

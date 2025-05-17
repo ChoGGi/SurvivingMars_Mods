@@ -1,3 +1,6 @@
+v0.7
+Added buildings to cargo.
+
 v0.6
 Checks for DLC.
 

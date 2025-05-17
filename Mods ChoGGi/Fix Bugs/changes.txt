@@ -1,3 +1,10 @@
+v9.9
+Log spam on new games (thanks Tremualin).
+Also cleaned up some code/comments.
+
+v9.8
+Log spam from Fix Deposits Wrong Map.
+
 v9.7
 Added my mod:
 Fix Deposits Wrong Map

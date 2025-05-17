@@ -23,12 +23,12 @@ local TestSunPanelRange = TestSunPanelRange
 local ValidateBuilding = ValidateBuilding
 local WorldToHex = WorldToHex
 
+local empty_table = empty_table
+local g_AvailableDlc = g_AvailableDlc
+
 --
 -- Fix for Silva's Orion Rocket mod (part 1/2, backing up the func he overrides)
 local ChoOrig_PlacePlanet = PlacePlanet
-
-local empty_table = empty_table
-local g_AvailableDlc = g_AvailableDlc
 
 local mod_EnableMod
 local mod_FarmOxygen
@@ -43,7 +43,7 @@ local mod_ColonistsWrongRealmPath
 --
 -- Uneven terrain fix funcs
 local function UpdateTerrainMap(map)
-	-- Suspend funcs speed up "doing stuff"
+	-- Suspend funcs speed up "doing stuff", though passedits are more for modifying objs
 	map.realm:SuspendPassEdits("ChoGGi_FixBugs_UnevenTerrain")
 	SuspendTerrainInvalidations("ChoGGi_FixBugs_UnevenTerrain")
 	--
@@ -67,79 +67,43 @@ local GetCityLabels = rawget(_G, "ChoGGi_Funcs") and ChoGGi_Funcs.Common.GetCity
 		local labels = UIColony and UIColony.city_labels.labels or UICity.labels
 		return labels[label] or empty_table
 	end
--- Copied from ChoGGi_Funcs.Common.RetObjMapId()
-local RetObjMapId = rawget(_G, "ChoGGi_Funcs") and ChoGGi_Funcs.Common.RetObjMapId
-	or function(obj, text, fallback)
-		if obj then
-			return obj.city and obj.city.map_id
-				or obj.GetMapID and obj:GetMapID()
-				or g_CObjectFuncs.GetMapID(obj)
-				or fallback and ActiveMapID
-				or text and "unknown" or ""
-		end
-		return fallback and ActiveMapID or text and "unknown" or ""
-	end
 
 --
 -- Fix Deposits Wrong Map
-local function FixDepositsWrongMap_FixDeposit(deposit, map_id)
+local function FixDepositsWrongMap_MoveDeposit(deposit, map_id)
+	if not deposit then
+		return
+	end
 	-- No point in moving something already there
-	if deposit and RetObjMapId(deposit) ~= map_id then
-		-- Move deposit to proper map (preserves position)
-		deposit:TransferToMap(map_id)
-		-- z is still set to z from underground
-		local pos = deposit:GetPos()
-		-- Used propermap.terrain:GetHeight instead of just :SetTerrainZ() since that seems to use the active terrain
-		deposit:SetPos(pos:SetZ(
-			GameMaps[map_id].terrain:GetHeight(pos)
-		))
-	end
-end
-
-local function FixDepositsWrongMap_UpdateDeposits(map_id)
-	-- Skip the indexed sector tables since we're using pairs()
-	local sector_nums = {
-	 [1] = true,
-	 [2] = true,
-	 [3] = true,
-	 [4] = true,
-	 [5] = true,
-	 [6] = true,
-	 [7] = true,
-	 [8] = true,
-	 [9] = true,
-	 [10] = true,
-	}
-	local sectors = Cities[map_id].MapSectors
-	for sector in pairs(sectors) do
-		if not sector_nums[sector] and #sector.markers.surface > 0 then
-			local deposits = sector.markers.surface
-			for i = 1, #deposits do
-				FixDepositsWrongMap_FixDeposit(deposits[i].deposit, map_id)
-			end
-		end
-	end
-
-end
-
-local function FixDepositsWrongMap_UpdateMaps()
-	if not mod_EnableMod then
+	local old_map_id = deposit:GetMapID()
+	if old_map_id == map_id then
 		return
 	end
 
-	local MainMapID = MainMapID
-	-- Scan asteroids as well, since there could be surface concrete there as well
+	-- Move deposit to proper map (preserves position)
+	deposit:TransferToMap(map_id)
+	-- z is still set to z from underground
+	local pos = deposit:GetPos()
+	-- Used .terrain:GetHeight instead of :SetTerrainZ() since that seems to use the active terrain
+	deposit:SetPos(pos:SetZ(
+		GameMaps[map_id].terrain:GetHeight(pos)
+	))
+	-- label doesn't get updated for some reason?
+	-- They're not a CityObject, but they're in city.labels.TerrainDeposit
+	-- so probably that?
+	Cities[old_map_id]:RemoveFromLabel("TerrainDeposit", deposit)
+	Cities[map_id]:AddToLabel("TerrainDeposit", deposit)
+end
+
+local function FixDepositsWrongMap_UpdateMaps()
+	-- Scan all maps, since there can be main map concrete on asteroids
 	for map_id, map in pairs(GameMaps) do
-		FixDepositsWrongMap_UpdateDeposits(map_id)
-
-		if map_id ~= MainMapID then
-			local objs = map.realm:MapGet(true, "SurfaceDepositConcrete")
-			for i = 1, #objs do
-				-- SurfaceDepositConcrete should only spawn on
-				FixDepositsWrongMap_FixDeposit(objs[i], MainMapID)
-			end
+		local objs = map.realm:MapGet(true, "TerrainDeposit")
+		for i = #objs, 1, -1 do
+			-- TerrainDeposit should only spawn on
+			local obj = objs[i]
+			FixDepositsWrongMap_MoveDeposit(obj, obj.marker:GetMapID())
 		end
-
 	end
 end
 SavegameFixups.ChoGGi_FixDepositsStuckUnderground = FixDepositsWrongMap_UpdateMaps
@@ -172,9 +136,9 @@ local function UpdateSolarPanel(panel, suns)
 end
 
 --
--- Colonists are in the underground labels, but live on surface (or newly arrived and something Elevator doesn't fully move them?).
+-- Colonists are in the underground labels, but live on surface (or newly arrived and sometimes Elevator doesn't fully move them?).
 -- .arriving is I think from colonists fresh off the boat.
--- a .holder is a diner/bar/etc, so try that next (odd but true)
+-- a .holder is a diner/bar/etc, so try that next
 -- Not that it really matters, I was going to force them to reset as they look odd since I reset their pos to the ground
 -- but since they're already on the surface than pos should be fine
 local ref_list = {
@@ -221,12 +185,14 @@ local function ModOptions(id)
 
 	if GetLanguage() == "English" then
 		tt[8390] = "This rocket is tasked with bringing construction materials for the Hydrogen 3 mining base being built on the Moon - Aldrin Base."
+		tt[297691849913] = "I'm honored, but it would be fine if you continue working from Earth."
 	end
 
 	if not UIColony then
 		return
 	end
 
+	-- Fix Deposits Wrong Map
 	FixDepositsWrongMap_UpdateMaps()
 
 	-- Update all maps for uneven terrain (if using mod that allows landscaping maps other than surface)
@@ -249,7 +215,6 @@ function OnMsg.SectorScanned()
 	--
 	-- The Philosopher's Stone Mystery doesn't update sector scanned count when paused.
 	-- I could add something to check if this is being called multiple times per unpause, but it's not doing much
-	-- Check if we're on the right mystery
 	local stone_seq
 	local players = s_SeqListPlayers or ""
 	for i = 1, #players do
@@ -384,7 +349,6 @@ function OnMsg.ClassesPostprocess()
 					for i = #units, 1, -1 do
 						local unit = units[i]
 						if CheckColonistMap(unit, colony) then
---~ 							print("name", ChoGGi_Funcs.Common.Translate(unit.name))
 							-- Best remove it from whatever Disembark will do
 							table.remove(units, i)
 							-- Lets hope this solves the crashing
@@ -432,12 +396,12 @@ do -- CityStart/LoadGame
 		-- If this is called on a save from before B&B (it does update, but after LoadGame)
 		local main_city = MainCity or UICity
 		local colony = UIColony or main_city
-		local main_realm = GetRealmByID(MainMapID)
+		local main_realm = GetRealmByID(main_city.map_id)
 		local GameMaps = GameMaps
 		local Cities = Cities
 
-		local surface_map = GameMaps[colony.surface_map_id]
-		local surface_city = Cities[colony.surface_map_id]
+		local surface_map = GameMaps[main_city.map_id]
+		local surface_city = Cities[main_city.map_id]
 		local underground_map = GameMaps[UIColony.underground_map_id]
 		local underground_city = Cities[colony.underground_map_id]
 
@@ -453,7 +417,6 @@ do -- CityStart/LoadGame
 			--
 			-- Fix Rover In Dome
 			-- Checks on load for rovers stuck in domes (not open air ones).
-			-- Also fixes drones stuck in pastures.
 			-- No point in checking if domes have been opened
 			if not GetOpenAirBuildings(main_city.map_id) then
 				local dome_size = box(0, 0, 32000, 32000)
@@ -470,6 +433,8 @@ do -- CityStart/LoadGame
 					end
 				end
 			end
+
+			--
 			-- Drones stuck in pastures
 			local ranch_size = box(0, 0, 4000, 4000)
 			objs = GetCityLabels("Drone")
@@ -495,8 +460,7 @@ do -- CityStart/LoadGame
 			BuildingTemplates.ShuttleHub.save_in = ""
 
 			--
-			-- If you have more than one ArtificialSun then solar panels ignore sun + 1.
-			-- Fix for more than one art sun (1/2)
+			-- If you have more than one ArtificialSun then solar panels ignore sun + 1. (fix 1/2)
 			objs = GetCityLabels("ArtificialSun")
 			if #objs > 0 then
 				-- Update all solar panels
@@ -517,23 +481,13 @@ do -- CityStart/LoadGame
 			if not idx then
 				-- insert after rc transport
 				local transport_idx = table.find(ResupplyItemDefinitions, "id", "RCTransport")
-				-- function ResupplyItemsInit() (last copied Tito-Hotfix)
+				-- function ResupplyItemsInit() (last checked lua rev 1011166)
 				local sponsor = g_CurrentMissionParams and g_CurrentMissionParams.idMissionSponsor or ""
 				local mods = GetSponsorModifiers(sponsor)
 				local locks = GetSponsorLocks(sponsor)
 				local def = setmetatable({}, {__index = CargoPreset.RCSafari})
 				table.insert(ResupplyItemDefinitions, transport_idx, def)
-				local mod = mods[def.id] or 0
-				if mod ~= 0 then
-					ModifyResupplyDef(def, "price", mod)
-				end
-				local lock = locks[def.id]
-				if lock ~= nil then
-					def.locked = lock
-				end
-				if type(def.verifier) == "function" then
-					def.locked = def.locked or not def.verifier(def, sponsor)
-				end
+				UpdateResupplyDef(sponsor, mods, locks, def)
 			end
 
 			--
@@ -1288,21 +1242,27 @@ do -- CityStart/LoadGame
 
 			--
 			--	Move any floating underground rubble to within reach of drones (might have to "push" drones to make them go for it).
-			underground_map.realm:MapForEach("map", "CaveInRubble", function(obj)
-				local pos = obj:GetVisualPos()
-				if pos:z() > 0 then
-					-- The ground floor is 0 (or close enough to not matter), so I can just move it instead of having to check height.
-					obj:SetPos(pos:SetZ(0))
-				end
-			end)
+			if not underground_city.ChoGGi_LoweredCaveInRubble then
+				underground_map.realm:MapForEach("map", "CaveInRubble", function(obj)
+					local pos = obj:GetVisualPos()
+					if pos:z() > 0 then
+						-- The ground floor is 0 (or close enough to not matter), so I can just move it instead of having to check height.
+						obj:SetPos(pos:SetZ(0))
+					end
+				end)
 
-			--
-			-- Unpassable underground rocks stuck in path (not cavein rubble, but small rocks you can't select).
-			-- Since they're small rocks, might as well just make them passable
-			-- https://forum.paradoxplaza.com/forum/threads/surviving-mars-completely-blocked-tunnel-not-the-collapsed-tunnel.1541240/
-			underground_map.realm:MapForEach("map", "WasteRockObstructorSmall", function(obj)
-				obj:SetBlockPass(false)
-			end)
+				--
+				-- Unpassable underground rocks stuck in path (not cavein rubble, but small rocks you can't select).
+				-- Since they're small rocks, might as well just make them passable
+				-- https://forum.paradoxplaza.com/forum/threads/surviving-mars-completely-blocked-tunnel-not-the-collapsed-tunnel.1541240/
+				underground_map.realm:MapForEach("map", "WasteRockObstructorSmall", function(obj)
+					obj:SetBlockPass(false)
+				end)
+
+				-- No need to do it every load, since I also change the func that puts them too high
+				-- I also put the WasteRockObstructorSmall in here, since those are from map gen
+				underground_city.ChoGGi_LoweredCaveInRubble = true
+			end
 
 			--
 			-- Move any underground dome prefabs (underground anomaly "storybit") to underground city (instead of being stuck on surface)
@@ -1327,7 +1287,9 @@ do -- CityStart/LoadGame
 	end
 
 	function OnMsg.CityStart()
-		StartupCode("CityStart")
+		-- Add a delay for new games so stuff can load
+		-- LoadGame happens late enough that this isn't needed
+		CreateGameTimeThread(StartupCode, "CityStart")
 	end
 	function OnMsg.LoadGame()
 		StartupCode("LoadGame")
@@ -2097,7 +2059,9 @@ function TerrainDepositMarker:SpawnDeposit(...)
 	end
 
 	local deposit = ChoOrig_TerrainDepositMarker_SpawnDeposit(self, ...)
-	FixDepositsWrongMap_FixDeposit(deposit, self:GetMapID())
+
+	FixDepositsWrongMap_MoveDeposit(deposit, self:GetMapID())
+
 	return deposit
 end
 
@@ -2341,9 +2305,9 @@ function TriggerCaveIn(...)
 	local rubble = ChoOrig_TriggerCaveIn(...)
 
 	local pos = rubble:GetVisualPos()
-	if pos:z() > 0 then
+	if pos:z() > 50 then
 		-- The ground floor is 0 (or close enough to not matter), so I can just move it instead of having to check height.
-		rubble:SetPos(pos:SetZ(0))
+		rubble:SetPos(pos:SetZ(AsyncRand(50)+1))
 	end
 
 	return rubble

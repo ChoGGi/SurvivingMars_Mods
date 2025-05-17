@@ -70,6 +70,22 @@ function OnMsg.ModsReloaded()
 	end
 end
 
+
+-- Set what shows up in resupply dialog (rockets)
+local function UpdateCargoDef(bld_id)
+	-- Strip off "Building" from id
+	if bld_id:sub(1, 2) == "RC" then
+		bld_id = bld_id:sub(1 , -9)
+	end
+
+	local defs = ResupplyItemDefinitions
+	local idx = table.find(defs, "id", bld_id)
+	if idx then
+		defs[idx].locked = false
+	end
+
+end
+
 -- Mr. Burns
 local excel = 61
 
@@ -105,6 +121,7 @@ local function UpdateStanding()
 				-- not sure why they added three sponsors (when they only use one) so we'll just be lazy
 				for i = 1, 3 do
 					if standing_excel then
+						UpdateCargoDef(bld_id)
 						BuildingTemplates[bld_id]["sponsor_status" .. i] = false
 					else
 						BuildingTemplates[bld_id]["sponsor_status" .. i] = list[i]

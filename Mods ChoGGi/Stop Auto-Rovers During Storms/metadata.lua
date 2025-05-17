@@ -28,6 +28,7 @@ Such as collecting the goodies that just dropped from the sky.
 
 They'll finish up whatever task they're on then aim for the nearest working laser/missile tower/drone hub (in that order)
 
+Mod Options:
 MDS Laser: Go to the nearest working laser/missile tower if rover is idle.
 Drone Hub: Go to the nearest working drone hub if rover is idle.
 Immediate Abort: As soon as storm starts rovers will flee/idle (default off).

@@ -68,6 +68,8 @@ end
 
 -- use this message to mess with the classdefs (before classes are built)
 function OnMsg.ClassesGenerate()
+
+	--
 	if ChoGGi.UserSettings.AllLoadingScreens then
 		g_FirstLoadingScreen = false
 

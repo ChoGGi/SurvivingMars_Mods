@@ -63,7 +63,6 @@ local mod_options = {}
 local BuildingTemplates = BuildingTemplates
 for id, bld in pairs(BuildingTemplates) do
 	for i = 1, 3 do
---~ 		if sponsor_buildings[id] or bld["sponsor_status" .. i] ~= false then
 		if sponsor_buildings[id] or bld["sponsor_name" .. i] ~= "" then
 			mod_options["ChoGGi_" .. id] = false
 			mod_options["ChoGGi_Tech_" .. id] = false
@@ -119,7 +118,6 @@ end
 function OnMsg.TechResearched(tech_id)
 	local building_id = tech_to_building[tech_id]
 	if not building_id then
---~ 		print("return", tech_id)
 		return
 	end
 
@@ -175,32 +173,33 @@ local function ModOptions(id)
 --~ ex{"sponsor_buildings",sponsor_buildings}
 	local BuildingTemplates = BuildingTemplates
 	for id, bld in pairs(BuildingTemplates) do
+		if not sponsor_buildings[id] then
+			goto continue
+		end
 
-		if sponsor_buildings[id] then
-
-			-- Set each status to false if it isn't
-			for i = 1, 3 do
-				local str = "sponsor_status" .. i
-				if mod_options["ChoGGi_" .. id] then
-					bld[str] = false
-				elseif bld[str] ~= "" then
-					bld[str] = "required"
-				end
-			end
-
-			-- and this bugger screws me over on GetBuildingTechsStatus when using RCs
-			local name = id
-			if name:sub(1, 2) == "RC" and name:sub(-8) == "Building" then
-				name = name:gsub("Building", "")
-			end
-
-			local reqs = BuildingTechRequirements[id]
-			local idx = table.find(reqs, "check_supply", name)
-			if idx then
-				table.remove(reqs, idx)
+		-- Set each status to false if it isn't
+		for i = 1, 3 do
+			local str = "sponsor_status" .. i
+			if mod_options["ChoGGi_" .. id] then
+				bld[str] = false
+			elseif bld[str] ~= "" then
+				bld[str] = "required"
 			end
 		end
 
+		-- and this bugger screws me over on GetBuildingTechsStatus when using RCs
+		local name = id
+		if name:sub(1, 2) == "RC" and name:sub(-8) == "Building" then
+			name = name:gsub("Building", "")
+		end
+
+		local reqs = BuildingTechRequirements[id]
+		local idx = table.find(reqs, "check_supply", name)
+		if idx then
+			table.remove(reqs, idx)
+		end
+
+		::continue::
 	end
 
 	-- Make sure we're in-game

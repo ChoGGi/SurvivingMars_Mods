@@ -17,6 +17,13 @@ return PlaceObj("ModDef", {
 	"description", [[
 Prints enabled mod info (status of mod options basically) in the console.
 
+If I ask you to install this mod:
+Enable it in mod manager
+Press Ok to the usual mod warning
+You can go right back into manager and turn it off
+Quit the game and send me the latest log
+
+
 This mod is to help me debug mod problems on your computer.
 If you want more info printed in your console feel free to install it?
 ]],

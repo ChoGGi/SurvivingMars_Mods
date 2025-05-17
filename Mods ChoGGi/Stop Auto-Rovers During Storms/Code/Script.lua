@@ -108,16 +108,14 @@ for i = 1, #classes do
 end
 
 function OnMsg.MeteorStorm()
-	if not mod_ImmediateAbort then
-		return
-	end
-
-	local objs = MainCity.labels.Rover or ""
-	for i = 1, #objs do
-		local obj = objs[i]
-		if IsValid(obj) and obj:IsKindOfClasses(classes) then
-			obj:SetState("idle")
-			obj:SetCommand("Idle")
+	if mod_ImmediateAbort then
+		local objs = MainCity.labels.Rover or ""
+		for i = 1, #objs do
+			local obj = objs[i]
+			if IsValid(obj) and obj:IsKindOfClasses(classes) then
+				obj:SetState("idle")
+				obj:SetCommand("Idle")
+			end
 		end
 	end
 end

@@ -1,3 +1,6 @@
+v2.4
+items.lua error
+
 v2.3
 Show items in new game cargo menu.
 
