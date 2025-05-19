@@ -385,8 +385,12 @@ do -- ToggleLogErrors
 	local function UndefinedGlobalUpdate(msg, stack)
 		UndefinedGlobals_c = UndefinedGlobals_c + 1
 		UndefinedGlobals[UndefinedGlobals_c] = msg .. "\n" .. stack
-		if not UserSettings.ConsoleSkipUndefinedGlobals then
-			print(msg, "\n", stack)
+		if testing and UserSettings.ConsoleSkipUndefinedGlobals then
+			print("<color ChoGGi_red>", msg, "</color>")
+		else
+			if not UserSettings.ConsoleSkipUndefinedGlobals then
+				print(msg, "\n", stack)
+			end
 		end
 	end
 

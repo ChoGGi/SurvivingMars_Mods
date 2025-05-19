@@ -238,7 +238,7 @@ DefineClass.ChoGGi_DlgExamine = {
 
 function ChoGGi_DlgExamine:Init(parent, context)
 	if what_game == "Mars" then
-		city_object = rawget(_G, "UICity") or Game or false
+		city_object = rawget(_G, "UICity") or rawget(_G, "Game") or false
 	elseif what_game == "JA3" then
 		city_object = rawget(_G, "Game")
 	end
@@ -3953,32 +3953,34 @@ function ChoGGi_DlgExamine:BuildParentsMenu(list, list_type, title, sort_type)
 			centred = true,
 		}
 
-		local parent_hint = T{"<left_click> <examineN> <classN> <objectN> : <color 100 255 100><itemN></color>\n <info>",
-			examineN = T(302535920000069--[[Examine]]),
-			classN = self.string_Class,
-			objectN = self.string_Object,
-			itemN = item,
-			info = T{302535920000904--[["<right_click> to copy <color ChoGGi_yellow><str></color> to clipboard."]],
-				str = self.string_Classname,
-			},
-		}
-		local hint_bottom = T(302535920000589--[[<left_click> Examine <right_click> Clipboard]])
-
 		for i = 1, #list do
 			local item = list[i]
 			-- no sense in having an item in parents and ancestors
-			if not self.pmenu_skip_dupes[item] then
-				self.pmenu_skip_dupes[item] = true
-				c = c + 1
-				self.parents_menu_popup[c] = {
-					name = item,
-					hint = parent_hint,
-					hint_bottom = hint_bottom,
-					mouseup = self.ParentClicked,
-					dlg = self,
-				}
+			if self.pmenu_skip_dupes[item] then
+				goto continue
 			end
 
+			local parent_hint = T{"<left_click> <examineN> <classN> <objectN> : <color 100 255 100><itemN></color>\n <info>",
+				examineN = T(302535920000069--[[Examine]]),
+				classN = self.string_Class,
+				objectN = self.string_Object,
+				itemN = item,
+				info = T{302535920000904--[["<right_click> to copy <color ChoGGi_yellow><str></color> to clipboard."]],
+					str = self.string_Classname,
+				},
+			}
+
+			self.pmenu_skip_dupes[item] = true
+			c = c + 1
+			self.parents_menu_popup[c] = {
+				name = item,
+				hint = parent_hint,
+				hint_bottom = T(302535920000589--[[<left_click> Examine <right_click> Clipboard]]),
+				mouseup = self.ParentClicked,
+				dlg = self,
+			}
+			--
+			::continue::
 		end
 	end
 end

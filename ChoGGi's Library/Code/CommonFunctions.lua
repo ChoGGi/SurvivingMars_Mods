@@ -710,13 +710,13 @@ do -- MsgPopup
 			dlg:ResolveRelativeFocusOrder()
 			ChoGGi.Temp.MsgPopups[#ChoGGi.Temp.MsgPopups+1] = popup
 
-			-- large amount of text option
+			-- wide amount of text option
 			if params.size then
 				local frame = GetParentOfKind(popup.idText, "XFrame")
 				if frame then
 					frame:SetMaxWidth(params.max_width or 1000)
 				end
-				-- popup.idText:SetMaxHeight(params.max_height or 250)
+--~ 				popup.idText:SetMaxHeight(params.max_height or 250)
 			end
 
 		end)

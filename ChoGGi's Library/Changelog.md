@@ -1,6 +1,8 @@
 ## Library Changelog
 
 ## v12.7 (Unreleased)
+### Examine:
+- Hints for Parents>menuitems weren't showing up (thanks Tremualin).
 
 ## v12.6 (4 May 2025)
 - MsgWait hasn't been displaying my default image for quite some time.
