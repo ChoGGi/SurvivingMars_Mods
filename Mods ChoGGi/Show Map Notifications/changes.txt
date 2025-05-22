@@ -1,8 +1,11 @@
+v0.5
+Log spam (Thanks Tremualin).
+
 v0.4
 Now properly shows title: text.
 
 v0.3
-Compatible with Sherlock (thanks lyssabet).
+Compatible with Sherlock (Thanks lyssabet).
 
 v0.2
 Less likely to hide map buttons.

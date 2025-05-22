@@ -247,12 +247,24 @@ function OverviewModeDialog:GenerateSectorRolloverContext(sector, ...)
 	return ret1, ret2
 end
 
-local ChoOrig_OverviewModeDialog_CreateSectorRollover = OverviewModeDialog.CreateSectorRollover
-function OverviewModeDialog.CreateSectorRollover(...)
-	local varargs = {...}
 
-	CreateRealTimeThread(function()
+--~ local ChoOrig_OverviewModeDialog_CreateSectorRollover = OverviewModeDialog.CreateSectorRollover
+--~ function OverviewModeDialog.CreateSectorRollover(...)
+--~ 	CreateRealTimeThread(function(...)
+--~ 		Sleep(mod_InfoBoxDelay)
+--~ 		ChoOrig_OverviewModeDialog_CreateSectorRollover(...)
+--~ 	end, ...)
+--~ end
+local ChoOrig_OverviewModeDialog_CreateSectorRollover = OverviewModeDialog.CreateSectorRollover
+function OverviewModeDialog:CreateSectorRollover(sector, rollover_pos, forced, ...)
+	CreateRealTimeThread(function(self, sector, rollover_pos, forced, ...)
 		Sleep(mod_InfoBoxDelay)
-		ChoOrig_OverviewModeDialog_CreateSectorRollover(table.unpack(varargs))
-	end)
+
+		-- Copy pasta from OverviewModeDialog:GenerateSectorRolloverContext(sector, forced)
+		if (not forced and CameraTransitionThread) or not sector or sector.id ~= self.sector_id then -- only refresh when called for the selected sector
+			return
+		end
+
+		ChoOrig_OverviewModeDialog_CreateSectorRollover(self, sector, rollover_pos, forced, ...)
+	end, self, sector, rollover_pos, forced, ...)
 end

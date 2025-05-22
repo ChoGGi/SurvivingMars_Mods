@@ -14,6 +14,7 @@ local function StartupCode()
 		ChoGGi_Funcs.Common.SetConsts("ForcedByUserLockTimeout", five_sols)
 	end
 end
+
 -- New games
 OnMsg.CityStart = StartupCode
 -- Saved ones

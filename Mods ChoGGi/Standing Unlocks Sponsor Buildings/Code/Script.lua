@@ -5,6 +5,12 @@ if not g_AvailableDlc.gagarin then
 	return
 end
 
+local GetStandingText = GetStandingText
+local Max = Max
+local T = T
+local CmpLower = CmpLower
+local _InternalTranslate = _InternalTranslate
+
 local mod_ShowNotification
 local mod_MinStanding
 
@@ -136,15 +142,12 @@ local function UpdateStanding()
 	end
 
 	-- build list of changed standings and display msg
-	local GetStandingText = GetStandingText
-	local Max = Max
-	local T = T
 	local standing_msg = {}
 	local c = 0
 	for _, rival in pairs(RivalAIs) do
 		local standing = rival.resources.standing
 		c = c + 1
-		standing_msg[c] = T{302535920011562, "<name>: <stand_text><newline>",
+		standing_msg[c] = T{302535920011562, "<name>: <stand_text>",
 			name = rival.display_name,
 			stand_text = T{11538, "<standing> (<clamped_number>)",
 				standing = GetStandingText(standing),
@@ -154,15 +157,14 @@ local function UpdateStanding()
 	end
 
 	-- sort by rival name
-	local CmpLower = CmpLower
-	local _InternalTranslate = _InternalTranslate
 	table.sort(standing_msg, function(a, b)
 		return CmpLower(_InternalTranslate(a.name), _InternalTranslate(b.name))
 	end)
 
 	ChoGGi_Funcs.Common.MsgPopup(
-		table.concat(standing_msg),
-		T(302535920011561, "Colony Standing")
+		table.concat(standing_msg, ", "),
+		T(302535920011561, "Colony Standing"),
+		{size = true}
 	)
 end
 

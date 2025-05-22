@@ -9,6 +9,7 @@ local mod_EnableMod
 
 local table = table
 local T = T
+local _InternalTranslate = _InternalTranslate
 
 local ChoOrig_MapSwitch_GetEntries = MapSwitch.GetEntries
 function MapSwitch.GetEntries(...)
@@ -47,7 +48,7 @@ function MapSwitch.GetEntries(...)
 							if params.additional_text then
 								text = text .. T{params.additional_text, params}
 							end
-							text_list[2] = T{text, params}
+							text_list[2] = _InternalTranslate(T{text, params})
 							-- merge it
 							notifs_text[j] = table.concat(text_list, ": ")
 						else
@@ -56,6 +57,7 @@ function MapSwitch.GetEntries(...)
 						end
 
 				end
+				notifs_text[2] = _InternalTranslate(notifs_text[2])
 				realm.RolloverText = realm.RolloverText .. T("\n\n<yellow>") .. T(7582--[[Notifications]])
 					.. T(":</yellow>\n") .. table.concat(notifs_text, "\n")
 			end

@@ -45,9 +45,6 @@ end
 -- maybe make them stored settings...
 local width, height
 
--- Figure out what to use for JA3 instead of UICity
-local city_object = false
-
 -- local some globals
 local pairs, type, tostring, tonumber = pairs, type, tostring, tonumber
 local getmetatable, rawget, next, table = getmetatable, rawget, next, table
@@ -171,6 +168,9 @@ DefineClass.ChoGGi_DlgExamine = {
 	-- examine children in same dialog
 	child_lock = false,
 	child_lock_dlg = false,
+	-- Figure out what to use for JA3 instead of UICity
+	city_object = false,
+
 
 	-- strings called repeatedly
 	string_Loadingresources = false,
@@ -238,9 +238,9 @@ DefineClass.ChoGGi_DlgExamine = {
 
 function ChoGGi_DlgExamine:Init(parent, context)
 	if what_game == "Mars" then
-		city_object = rawget(_G, "UICity") or rawget(_G, "Game") or false
+		self.city_object = UICity
 	elseif what_game == "JA3" then
-		city_object = rawget(_G, "Game")
+		self.city_object = Game
 	end
 
 
@@ -2501,7 +2501,7 @@ end
 --
 local function Show_ConvertValueToInfo(self, button, obj)
 	-- not ingame = no sense in using ShowObj
-	if button == "L" and city_object and (IsValid(obj) or IsPoint(obj)) then
+	if button == "L" and self.city_object and (IsValid(obj) or IsPoint(obj)) then
 		self:AddSphere(obj)
 	else
 		ChoGGi_Funcs.Common.OpenInExamineDlg(obj, {
@@ -3581,8 +3581,8 @@ function ChoGGi_DlgExamine:ConvertObjToInfo(obj, obj_type)
 					table.insert(data_meta, 1, "THasArgs(): " .. self:ConvertValueToInfo(THasArgs(obj)))
 					-- IsT returns the string id, but we'll just call it TGetID() to make it more obvious for people
 					table.insert(data_meta, 1, "\nTGetID(): " .. TGetID(obj))
-					if str_not_translated and not city_object then
-						table.insert(data_meta, 1, Translate(302535920001500--[[userdata object probably needs city_object to translate.]]))
+					if str_not_translated and not self.city_object then
+						table.insert(data_meta, 1, Translate(302535920001500--[[userdata object probably needs self.city_object to translate.]]))
 					end
 				end
 			end
@@ -3861,7 +3861,7 @@ function ChoGGi_DlgExamine:SetToolbarVis(obj, obj_metatable)
 	SetWinObjectVis(self.idObjects)
 
 	-- no sense in showing it in mainmenu/new game screens
-	SetWinObjectVis(self.idButClear, city_object)
+	SetWinObjectVis(self.idButClear, self.city_object)
 
 	SetWinObjectVis(self.idShowAllValues, obj_metatable and self.obj_type ~= "userdata")
 
@@ -4173,7 +4173,7 @@ end
 
 function ChoGGi_DlgExamine:CleanupCustomObjs(obj, force)
 	-- can't have game objs in main menu (and log spam)
-	if not city_object then
+	if not self.city_object then
 		return
 	end
 

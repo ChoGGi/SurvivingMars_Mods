@@ -1,3 +1,6 @@
+v1.0
+Log spam from delay infobar popup (Thanks Tremualin).
+
 v0.9
 Added mod option to delay infobar popup.
 

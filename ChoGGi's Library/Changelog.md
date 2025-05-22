@@ -1,6 +1,10 @@
 ## Library Changelog
 
 ## v12.7 (Unreleased)
+- Added a way for modders to apply mod options from lua code:
+``CurrentModOptions:SetProperty("ExampleModOption", true)
+ApplyModOptions(CurrentModId)``
+
 ### Examine:
 - Hints for Parents>menuitems weren't showing up (thanks Tremualin).
 

@@ -1,3 +1,6 @@
+v0.8
+Notification only showed two rivals.
+
 v0.7
 Added buildings to cargo.
 

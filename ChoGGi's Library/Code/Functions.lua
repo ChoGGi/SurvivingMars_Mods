@@ -20,6 +20,22 @@ function toboolean(str)
 --~ 	return 0/0
 end
 
+-- Allows you to call ApplyModOptions without having a dialog window to use to get the mod options
+-- ex:
+-- CurrentModOptions:SetProperty("ExampleModOption", true)
+-- ApplyModOptions(CurrentModId)
+local ChoOrig_GetDialogModeParam = GetDialogModeParam
+function GetDialogModeParam(id_or_win, ...)
+	-- Fake it till you make it
+	local mod = Mods and Mods[id_or_win]
+	if mod then
+		-- This will only be an issue if there's a dialog named the same as the mod_id
+		return mod
+	end
+
+	return ChoOrig_GetDialogModeParam(id_or_win, ...)
+end
+
 -- add PostSaveGame to be a companion for SaveGame
 local ChoOrig_ReportPersistErrors = ReportPersistErrors
 ChoGGi_Funcs.Common.AddToOriginal("ReportPersistErrors")

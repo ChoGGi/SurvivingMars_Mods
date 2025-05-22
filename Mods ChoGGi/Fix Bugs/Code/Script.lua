@@ -3,6 +3,7 @@
 -- Yeah, I probably don't need to local them all, but 'tain't gonna hurt nothing.
 local table, type, pairs, tostring, next = table, type, pairs, tostring, next
 local pcall = pcall
+local _InternalTranslate = _InternalTranslate
 local AsyncRand = AsyncRand
 local GetBuildingTechsStatus = GetBuildingTechsStatus
 local GetCity = GetCity
@@ -2069,10 +2070,6 @@ end
 --
 --
 --
---
---
---
---
 
 -- B&B fixes
 if not g_AvailableDlc.picard then
@@ -2083,13 +2080,6 @@ end
 --
 --
 --
---
---
---
---
---
---
-
 
 --
 -- Log spam from borked colonist (possibly from a mod, could just be B&B again)
