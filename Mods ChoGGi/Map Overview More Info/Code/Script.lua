@@ -247,14 +247,6 @@ function OverviewModeDialog:GenerateSectorRolloverContext(sector, ...)
 	return ret1, ret2
 end
 
-
---~ local ChoOrig_OverviewModeDialog_CreateSectorRollover = OverviewModeDialog.CreateSectorRollover
---~ function OverviewModeDialog.CreateSectorRollover(...)
---~ 	CreateRealTimeThread(function(...)
---~ 		Sleep(mod_InfoBoxDelay)
---~ 		ChoOrig_OverviewModeDialog_CreateSectorRollover(...)
---~ 	end, ...)
---~ end
 local ChoOrig_OverviewModeDialog_CreateSectorRollover = OverviewModeDialog.CreateSectorRollover
 function OverviewModeDialog:CreateSectorRollover(sector, rollover_pos, forced, ...)
 	CreateRealTimeThread(function(self, sector, rollover_pos, forced, ...)

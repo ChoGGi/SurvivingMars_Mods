@@ -1,3 +1,6 @@
+v0.6
+Log spam (Thanks Tremualin).
+
 v0.5
 Fix for v0.4.
 

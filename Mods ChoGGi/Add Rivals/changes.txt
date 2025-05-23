@@ -1,3 +1,6 @@
+v0.9
+Log spam (Thanks Tremualin).
+
 v0.8
 Log spam.
 

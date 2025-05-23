@@ -12,9 +12,9 @@ function return_false_func()
 end
 
 function toboolean(str)
-	if str == "true" then
+	if str == "true" or str == true then
 		return true
-	elseif str == "false" then
+	elseif str == "false" or str == false or not str then
 		return false
 	end
 --~ 	return 0/0

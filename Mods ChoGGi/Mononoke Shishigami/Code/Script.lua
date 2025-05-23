@@ -9,12 +9,18 @@ local GetTimeFactor = GetTimeFactor
 local GetCursorWorldPos = GetCursorWorldPos
 local GetDomeAtHex = GetDomeAtHex
 local AsyncRand = AsyncRand
+local SuspendPassEdits = SuspendPassEdits
+local ResumePassEdits = ResumePassEdits
+
 
 local function Random(m, n)
 	return AsyncRand(n - m + 1) + m
 end
 
 local mod_ToggleShrubs
+local mod_SpawnDelay
+local mod_MousePosition
+local mod_DieOffDelay
 
 local function ModOptions(id)
 	-- id is from ApplyModOptions
@@ -23,6 +29,9 @@ local function ModOptions(id)
 	end
 
 	mod_ToggleShrubs = CurrentModOptions:GetProperty("ToggleShrubs")
+	mod_SpawnDelay = CurrentModOptions:GetProperty("SpawnDelay")
+	mod_MousePosition = CurrentModOptions:GetProperty("MousePosition")
+	mod_DieOffDelay = CurrentModOptions:GetProperty("DieOffDelay")
 end
 -- Load default/saved settings
 OnMsg.ModsReloaded = ModOptions
@@ -104,6 +113,10 @@ DefineClass.ChoGGi_TransitoryEntity = {
 -- fade them to brown while shrinking
 function ChoGGi_TransitoryEntity:GameInit()
 	self.shrub_thread = CreateGameTimeThread(function()
+
+		-- Stops dome lag
+		SuspendPassEdits("ChoGGi.MononokeShishiGami.shrubthread")
+
 		-- scale/steps to loop
 		local steps = 30
 		if self.entity:sub(1, 4) == "Tree" then
@@ -123,11 +136,14 @@ function ChoGGi_TransitoryEntity:GameInit()
 			steps = steps - 1
 			self:SetScale(i)
 			self:SetColorModifier(colours[count_colours - i])
-			Sleep(50 + Random(1, 10))
+			Sleep(mod_DieOffDelay + Random(50, 250))
 		end
 
 		-- byebye
 		self:delete()
+
+		ResumePassEdits("ChoGGi.MononokeShishiGami.shrubthread")
+
 	end)
 end
 
@@ -142,14 +158,7 @@ end
 
 local cursor_pos
 local entity_cls
-local surface_map_id
-local active_map_id
 local function SpawnGreen()
-	-- weird lag underground, almost like domes, but seemingly random spots
-	if active_map_id ~= surface_map_id then
-		return
-	end
-
 	local obj = entity_cls:new()
 	local ent = entities[Random(1, count)]
 	obj:ChangeEntity(ent)
@@ -163,19 +172,22 @@ end
 local growth_thread
 
 local function CleanUp()
-	-- good as any place
-	active_map_id = ActiveMapID
-	surface_map_id = UIColony.surface_map_id
+	-- Good as any place
 	entity_cls = ChoGGi_TransitoryEntity
 
-	-- actual cleanup
+	-- Actual cleanup
 	DeleteThread(growth_thread)
 	local GameMaps = GameMaps
+	if not GameMaps then
+		return
+	end
+
 	for _, map in pairs(GameMaps) do
 		local objs = map.realm:MapGet("map", "ChoGGi_TransitoryEntity")
 		for i = 1, #objs do
-			DeleteThread(self.shrub_thread)
-			objs[i]:delete()
+			local obj = objs[i]
+			DeleteThread(obj.shrub_thread)
+			obj:delete()
 		end
 	end
 end
@@ -190,29 +202,25 @@ function OnMsg.InGameInterfaceCreated(igi)
 	local function OnMousePos()
 		if mod_ToggleShrubs and not skip and GetTimeFactor() > 0 then
 			cursor_pos = GetCursorWorldPos()
-			local dome = GetDomeAtHex(object_hex_grid, WorldToHex(cursor_pos))
-			-- Domes are laggy
-			if not dome then
+			if mod_MousePosition then
 				SpawnGreen()
-
-				if not IsValidThread(growth_thread) then
-					growth_thread = CreateGameTimeThread(function()
-						while true do
-							cursor_pos = GetCursorWorldPos()
-							local dome = GetDomeAtHex(object_hex_grid, WorldToHex(cursor_pos))
-							if not dome then
-								SpawnGreen()
-							end
-							Sleep(100)
-							-- Stop it in construction mode
-							if Dialogs.ConstructionModeDialog then
-								DeleteThread(growth_thread)
-							end
-						end
-					end)
-				end
-
 			end
+
+			if IsValidThread(growth_thread) then
+				return
+			end
+
+			growth_thread = CreateGameTimeThread(function()
+				while true do
+					cursor_pos = GetCursorWorldPos()
+					SpawnGreen()
+					Sleep(mod_SpawnDelay)
+					-- Stop it in construction mode
+					if Dialogs.ConstructionModeDialog then
+						DeleteThread(growth_thread)
+					end
+				end
+			end)
 		end
 	end
 
@@ -223,27 +231,31 @@ function OnMsg.InGameInterfaceCreated(igi)
 		return ChoOrig_OnMousePos_igi(self,...)
 	end
 
-	-- override OnMousePos for the SelectionModeDialog (works in both regular and selected, but not build menu)
+	-- Override OnMousePos for the SelectionModeDialog (works in both regular and selected, but not build menu)
 	local ChoOrig_OpenDialog = OpenDialog
 	function OpenDialog(cls,...)
 		local dlg = ChoOrig_OpenDialog(cls,...)
-		if cls == "SelectionModeDialog" then
-			CreateRealTimeThread(function()
-				if ChoOrig_OnMousePos_igi then
-					-- stop igi from doing it, since we can stick with this one
-					igi.OnMousePos = ChoOrig_OnMousePos_igi
-					ChoOrig_OnMousePos_igi = nil
-				end
-				WaitMsg("OnRender")
 
-				local ChoOrig_OnMousePos = dlg.OnMousePos
-				function dlg.OnMousePos(...)
-					OnMousePos()
-					return ChoOrig_OnMousePos(...)
-				end
-
-			end)
+		if cls ~= "SelectionModeDialog" then
+			return dlg
 		end
+
+		CreateRealTimeThread(function()
+			if ChoOrig_OnMousePos_igi then
+				-- Stop igi from doing it, since we can stick with this one
+				igi.OnMousePos = ChoOrig_OnMousePos_igi
+				ChoOrig_OnMousePos_igi = nil
+			end
+			WaitMsg("OnRender")
+
+			local ChoOrig_OnMousePos = dlg.OnMousePos
+			function dlg.OnMousePos(...)
+				OnMousePos()
+				return ChoOrig_OnMousePos(...)
+			end
+
+		end)
+
 		return dlg
 	end
 

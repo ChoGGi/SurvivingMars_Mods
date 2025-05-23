@@ -1,3 +1,8 @@
+v0.5
+Fixed dome/underground lag.
+Tweaked timing of die off to have a better trail on faster speeds.
+Mod options to shrub on mouse postion, delay shrubbing, die off delay.
+
 v0.4
 Growth when cursor stopped.
 Stopped growth in domes and underground as it's laggy.
