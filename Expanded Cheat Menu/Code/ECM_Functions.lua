@@ -1265,12 +1265,6 @@ function ChoGGi_Funcs.Common.UpdateServiceComfortBld(obj, service_stats)
 
 end
 
-function ChoGGi_Funcs.Common.BlacklistMsg(msg)
-	msg = Translate(302535920000242--[[%s is blocked by SM function blacklist; use ECM HelperMod to bypass or tell the devs that ECM is awesome and it should have Über access.]]):format(msg)
-	MsgPopup(msg,T(302535920000000--[[Expanded Cheat Menu]]))
-	print(msg)
-end
-
 do -- ToggleFuncHook
 	-- counts funcs calls, and keeps a table of func|line num
 	-- call as is ToggleFuncHook()

@@ -75,7 +75,7 @@
 302535920000069, "Examine"
 302535920000491, "Examine Object"
 302535920001073, "Console"
-302535920000242, "<color ChoGGi_red>%s</color> is blocked by SM function blacklist; use ECM HelperMod to bypass or tell the devs that ECM is awesome and it should have Über access ;)"
+302535920000242, "<color ChoGGi_red><func_name></color> is blocked by SM function blacklist!"
 302535920001303, "Search for text within <color ChoGGi_green><str></color>."
 302535920000306, "Everything"
 302535920000855, "Last chance before deletion!"
@@ -565,7 +565,7 @@ Hold <color ChoGGi_green>Ctrl</color> to close <color ChoGGi_red>all</color> ECM
 302535920001079, "<left_click> Default Action <right_click> Examine"
 302535920001522, "Hex Shape Toggle"
 302535920001523, "Toggle showing shapes for the object."
-302535920001521, "Lua source file not found."
+302535920001521, "Lua source file not found: <color ChoGGi_yellow><str></color>"
 302535920001519, "View Source"
 302535920001520, "Opens source code in text viewer (if it exists):
 Mod code works as is, HG github game code needs to be placed at:

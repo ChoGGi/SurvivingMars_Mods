@@ -4,6 +4,7 @@
 --~ ChoGGi_Funcs.Common.TickEnd()
 
 local ChoGGi_Funcs = ChoGGi_Funcs
+local blacklist = ChoGGi.blacklist
 local testing = ChoGGi.testing
 local what_game = ChoGGi.what_game
 
@@ -74,6 +75,7 @@ function OnMsg.ChoGGi_UpdateBlacklistFuncs(env)
 	-- make sure we use the actual funcs if we can
 	rawget = env.rawget
 	getmetatable = env.getmetatable
+	blacklist = false
 end
 
 -- "table.table.table.etc" try to find and return "etc" as actual object (default starts from _G)
@@ -309,8 +311,6 @@ do -- RetName
 					end
 				end
 			end
-
-			local blacklist = g.ChoGGi.blacklist
 
 			-- and any g_Classes funcs
 			for class_id, class_obj in pairs(g.g_Classes) do
@@ -8384,8 +8384,7 @@ source: '@Mars/Dlc/gagarin/Code/RCConstructor.lua'
 ~ChoGGi_Funcs.Common.RetSourceFile
 ]]
 		-- remove @
-		local at = path:sub(1, 1)
-		if at == "@" then
+		if path:sub(1, 1) == "@" then
 			path = path:sub(2)
 		end
 
@@ -8399,7 +8398,7 @@ source: '@Mars/Dlc/gagarin/Code/RCConstructor.lua'
 			end
 		end
 
-		-- might as well return commonlua/dlc files...
+		-- Return commonlua/dlc files (line numbers will usually be off as decompiled is different)
 		if path:sub(1, 5) == "Mars/" then
 			path = source_path .. path:sub(6)
 			err, code = g_env.AsyncFileToString(path)
@@ -8739,6 +8738,17 @@ function ChoGGi_Funcs.Common.SortBuildMenuItems()
 			items[j].build_pos = j
 		end
 	end
+end
+
+-- Show info when trying to open a blacklisted func
+function ChoGGi_Funcs.Common.BlacklistMsg(name)
+	local msg = T{302535920000242--[[<func_name> is blocked by SM function blacklist!]],
+		func_name = name,
+	}
+	if not testing then
+		MsgPopup(msg, T(302535920000000--[[Expanded Cheat Menu]]))
+	end
+	print(Translate(msg))
 end
 
 -- loop through all map sectors and fire this func

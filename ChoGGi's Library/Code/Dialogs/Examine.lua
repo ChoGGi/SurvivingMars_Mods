@@ -788,12 +788,14 @@ function ChoGGi_DlgExamine:ViewSourceCode()
 	local str, path = ChoGGi_Funcs.Common.RetSourceFile(info.source)
 	path = ConvertToOSPath(path)
 	if not str then
-		local msg = T(302535920001521--[[Lua source file not found.]]) .. ": " .. path
+		local msg = T{302535920001521--[[Lua source file not found: <str>]],
+			str = info.source,
+		}
 		ChoGGi_Funcs.Common.MsgPopup(
 			msg,
 			T(302535920001519--[[View Source]])
 		)
-		print(msg)
+		print(Translate(msg))
 		return
 	end
 
