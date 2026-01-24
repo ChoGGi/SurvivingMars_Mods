@@ -10,7 +10,8 @@ function DontBuildHere:GetIPDescription()
 
 Circle is radius of potential dust.
 
-Time between dust and time it lasts (random each time, these are min/max):]])
+(min,max)
+(time between dust) - (time it lasts):]])
 		.. PrefabFeatureChar_Geyser:GetDescription(self):sub(7)
 end
 

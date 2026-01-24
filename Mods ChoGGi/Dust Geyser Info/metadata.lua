@@ -24,5 +24,12 @@ return PlaceObj("ModDef", {
 	"TagInterface", true,
 	"description", [[
 Select a dust geyser to see the damage radius.
+
+
+They will add dust to outside buildings and domes that are built right next to it (one hex seems to be far away enough).
+Drones will take dust damage driving over it while it ejects dust.
+Colonists walking on it will take Sanity damage (Cowards take double dmg), unless they are Martianborn with Martianborn Strength tech researched.
+
+The screenshot shows it with cables around the actual damage area, you can use my [url=https://steamcommunity.com/sharedfiles/filedetails/?id=1743031290]Construction Show Buildable Grid[/url] mod to see the exact tiles.
 ]],
 })

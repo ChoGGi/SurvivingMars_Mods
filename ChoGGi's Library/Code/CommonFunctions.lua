@@ -57,7 +57,6 @@ local ViewObjectMars = ViewObjectMars
 local WorldToHex = WorldToHex
 
 -- Remove some log spam on older versions
-local is_gp = ChoGGi.is_gp
 local GetBuildableGrid = what_game ~= "MarsGP" and GetBuildableGrid
 local GetObjectHexGrid = what_game ~= "MarsGP" and GetObjectHexGrid
 -- cursor position on map (GP compat)

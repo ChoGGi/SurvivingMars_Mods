@@ -3,7 +3,6 @@
 -- shortcut keys without a menu item (maybe Menus isn't the best folder for this)
 
 local ChoGGi_Funcs = ChoGGi_Funcs
-local what_game = ChoGGi.what_game
 local T = T
 local Translate = ChoGGi_Funcs.Common.Translate
 local Actions = ChoGGi.Temp.Actions

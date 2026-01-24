@@ -1,0 +1,4 @@
+mark proper geyser around on selection.
+
+terrain:GetTerrainType(victim:GetVisualPos()) == g_DontBuildHere[victim:GetMapID()].terrain_idx then
+

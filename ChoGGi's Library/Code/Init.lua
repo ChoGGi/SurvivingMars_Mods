@@ -169,17 +169,6 @@ if c.HaeraldProjectName and c.HaeraldProjectName == "Mars" then
 		end
 	end
 	-- LuaRevision for SMR is lower than GP rev, so I'm using func names.
-
---~ 	if LuaRevision > 1006999 then
---~ 		what_game = "Mars"
---~ 	else
---~ 		if rawget(_G, "GetCursorWorldPos" then
---~ 			what_game = "MarsR"
---~ 		else
---~ 			-- Pre Abstraction Games (Before Tourism update rev 1,001,514)
---~ 			what_game = "MarsGP"
---~ 		end
---~ 	end
 elseif c.HaeraldProjectName and c.HaeraldProjectName == "FVH" then
 	-- Victor Vran
 	what_game = "VV"

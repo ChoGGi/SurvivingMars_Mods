@@ -15,7 +15,7 @@ return PlaceObj("ModDef", {
 	"has_options", true,
 	"TagInterface", true,
 	"description", [[
-Get rid of the blue overlay when game is paused.
+Get rid of the blue vignette when game is paused.
 
 
 Requested by Skratti_.

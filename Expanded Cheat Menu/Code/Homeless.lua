@@ -48,7 +48,7 @@ XPopupMenu.FocusedBackground = -11711669
 
 TextStyles.DevMenuBar.TextColor = white
 
-if what_game == "Mars" then
+if what_game == "Mars" or what_game == "MarsGP" then
 	-- Changed from 10000000
 	XShortcutsHost.ZOrder = 4
 elseif what_game == "MarsR" or what_game == "JA3" then
