@@ -134,6 +134,10 @@ function RandomMapGen_PlaceArtefacts(...)
 	const.BuriedWonders = table.icopy(orig_const_BuriedWonders)
 end
 
+-- SMR
+function OnMsg.RandomMapGen_PlaceArtefacts(env)
+end
+
 --~ -- Call the pin rocket func a second time for underground when being pinned to surface map
 --~ local ChoOrig_PinnableObject_TogglePin = PinnableObject.TogglePin
 --~ function PinnableObject:TogglePin(force, map_id, ...)

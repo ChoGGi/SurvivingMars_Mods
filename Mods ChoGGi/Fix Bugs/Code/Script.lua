@@ -1457,24 +1457,31 @@ do
 			end)
 		end
 
-		--
-		-- Rare Anomaly Analyzed: Fossils choices list always shows Global Support even if you don't have Space Race
-		-- Update before underground is unlocked so user doesn't get the wrong dialog
-		-- I would put this in ClassesPostprocess, but no mod options
-		if g_AvailableDlc.picard and not g_AccessibleDlc.gagarin then
-			local anom = DataInstances.Scenario.UndergroundAnomalies_Rare
-			local idx = table.find(anom, "name", "BR_New_Options")
-			anom = anom[idx]
-
-			-- Making it "" will choose a random breakthrough
-			anom[34].tech = ""
-			anom[35].text_param1 = T(3733--[[Random Breakthrough]])
-		end
-
-		--
-		--	Unlock Artificial Sun for re-fabbing
 		if g_AvailableDlc.picard then
+			--
+			-- Misspelled a reference (Morale Boost storybit? mini bit?)
+			local anom = DataInstances.Scenario.UndergroundAnomalies_Rare
+			local idx = table.find(anom, "name", "BR_Colonist_Style")
+			anom[idx][10].reg_param2 = "_rewardSols"
+
+			--
+			-- Rare Anomaly Analyzed: Fossils choices list always shows Global Support even if you don't have Space Race
+			-- Update before underground is unlocked so user doesn't get the wrong dialog
+			-- I would put this in ClassesPostprocess, but no mod options
+			if not g_AccessibleDlc.gagarin then
+				local anom = DataInstances.Scenario.UndergroundAnomalies_Rare
+				local idx = table.find(anom, "name", "BR_New_Options")
+				anom = anom[idx]
+
+				-- Making it "" will choose a random breakthrough
+				anom[34].tech = ""
+				anom[35].text_param1 = T(3733--[[Random Breakthrough]])
+			end
+
+			--
+			--	Unlock Artificial Sun for re-fabbing
 			ClassTemplates.Building.ArtificialSun.can_refab = true
+
 		end
 
 		--
