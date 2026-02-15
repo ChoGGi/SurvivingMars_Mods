@@ -492,6 +492,10 @@ function OnMsg.ClassesPostprocess()
 end
 
 function OnMsg.Refabricated(obj)
+	if not mod_EnableMod then
+		return
+	end
+
 	--
 	-- Refabbing certain buildings with particles (so far both rare extractor skins) will leave the particles behind
 	-- I clean them out on load, and use this to stop new ones from appearing.
@@ -500,6 +504,10 @@ function OnMsg.Refabricated(obj)
 end
 
 function OnMsg.TechResearched(tech_id)
+	if not mod_EnableMod then
+		return
+	end
+
 	--
 	-- Gene Forging tech doesn't increase rare traits chance.
 	-- GeneForging doesn't interact with anything unlike GeneSelection
@@ -508,6 +516,25 @@ function OnMsg.TechResearched(tech_id)
 	if tech_id == "GeneForging" then
 		TechDef.GeneSelection.param1 = 150
 	end
+end
+
+function OnMsg.TranslationChanged()
+	if not mod_EnableMod then
+		return
+	end
+
+	local tt = TranslationTable
+
+	--
+	-- Rare Anomaly Analyzed: Architecture will show sequence-50 in Sanity bar instead of proper text (1/4)
+	-- Update string to remove -50 (sanity bar shows it twice)
+	local str = tt[14230]
+	local idx1, idx2 = str:find("-50")
+	if not idx1 then
+		return
+	end
+	tt[14230] = str:sub(1, idx1 - 1, idx2)
+
 end
 
 --
@@ -1271,6 +1298,26 @@ do
 		if colony and colony.underground_map_unlocked then
 
 			--
+			-- Rare Anomaly Analyzed: Architecture will show sequence-50 in Sanity bar instead of proper text (3/3)
+			-- Update string to remove -50 (sanity bar shows it twice)
+			Msg("TranslationChanged")
+			-- Check old games for borked strings
+			objs = GetCityLabels("Colonist")
+			for i = #objs, 1, -1 do
+				local obj = objs[i]
+				if obj.specialist ~= "engineer" then
+					goto continue
+				end
+				local idx = table.find(obj.log_sanity, "sequence")
+				if idx then
+					obj.log_sanity[idx] = _InternalTranslate(T(14230))
+				end
+
+				--
+				::continue::
+			end
+
+			--
 			-- 3 different fixes for colonists on the wrong map and crashing the game
 			-- https://www.reddit.com/r/SurvivingMars/comments/1k70uxf/game_crashing_on_the_same_sol_every_time/
 			if mod_ColonistsWrongRealmPath then
@@ -1458,6 +1505,7 @@ do
 		end
 
 		if g_AvailableDlc.picard then
+
 			--
 			-- Misspelled a reference (Morale Boost storybit? mini bit?)
 			local anom = DataInstances.Scenario.UndergroundAnomalies_Rare
@@ -2725,6 +2773,35 @@ end
 --
 --
 --
+--
+--
+
+--
+-- Rare Anomaly Analyzed: Architecture will show sequence-50 in Sanity bar instead of proper text (4/4)
+-- Make it use the same funcs as morale change
+local ChoOrig_SA_ChangeStat_Process = SA_ChangeStat.Process
+function SA_ChangeStat:Process(seq_player, registers, colonist, ...)
+	-- There's only a sanity change that has the issue, but no harm in fixing for every other stat.
+	if not mod_EnableMod or self.Stat == "Morale" then
+		return ChoOrig_SA_ChangeStat_Process(self, seq_player, registers, colonist, ...)
+	end
+
+	local amount = seq_player:Eval("return " .. self.Amount, registers)
+
+	-- Yes it has a "MoraleReason" for Sanity...
+	local reason = self.MoraleReason ~= "" and self.MoraleReason or nil
+
+	colonist:ChangeStat(self.Stat, amount, reason)
+	if self.Duration ~= -1 then
+		CreateGameTimeThread(function()
+			Sleep(self.Duration * const.HourDuration)
+			if IsValid(colonist) then
+				colonist:ChangeStat(self.Stat, amount)
+			end
+		end)
+	end
+
+end
 
 --
 -- Log spam from borked colonist (possibly from a mod, could just be B&B again)

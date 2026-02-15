@@ -36,6 +36,7 @@ Toggling power to domes with passages in certain instances.
 
 ### Storybits (SPOILERS):
 ```
+Rare Anomaly Analyzed: Architecture shows sequence-50 instead of correct string.
 Underground bit Morale Boost has a misnamed reference.
 Long Winter Cold Wave timer can disappear at 4 Sols.
 Make Dust Sickness not effect Biorobots: It doesn't always cure colonists for some reason and Biorobots never die, plus they're robots...
