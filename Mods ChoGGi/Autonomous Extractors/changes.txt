@@ -1,3 +1,6 @@
+v0.5
+Changed MinValue to 10 so there's no more 11, 21, etc (thanks SoftwareSimian).
+
 v0.4
 Mod option to disable autonomous.
 

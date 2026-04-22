@@ -9,7 +9,7 @@ function OnMsg.ClassesPostprocess()
 	local g_Classes = g_Classes
 	local BuildingTemplates = BuildingTemplates
 	for id, item in pairs(BuildingTemplates) do
-		local cls_obj = g_Classes[item.template_class]
+		local cls_obj = g_Classes[item.id or item.template_class]
 		if cls_obj then
 			if IsKindOf(cls_obj, "Factory")
 				or IsKindOf(cls_obj, "Farm") or IsKindOf(cls_obj, "FungalFarm")
@@ -85,6 +85,13 @@ local function ModOptions(id)
 	-- id is from ApplyModOptions
 	if id and id ~= CurrentModId then
 		return
+	end
+
+	-- Indoor Polymer Factory (reuploaded)
+	-- Need to manually add this
+--~ 	if table.find(ModsLoaded, "id", "XXXXXX") then
+	if table.find(ModsLoaded, "steam_id", "3557563824") then
+		mod_options.Indoor_PolymerPlant = false
 	end
 
 	local options = CurrentModOptions

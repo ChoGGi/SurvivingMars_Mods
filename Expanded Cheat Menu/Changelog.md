@@ -2,6 +2,7 @@
 
 ## v19.9 (Unreleased)
 ### Fixed:
+- Console> $, @, @@ didn't show any console text.
 - Research Remove: Superior Cables/Pipes (thanks ChocoNoodles).
 ### Changed:
 - Instant Mission Goals will allow you to complete failed goals.

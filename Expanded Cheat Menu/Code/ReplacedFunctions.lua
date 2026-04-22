@@ -1748,23 +1748,23 @@ function OnMsg.ChoGGi_UpdateBlacklistFuncs(env)
 		end
 	end
 
-	-- override orig console rules with mine (thanks devs for making it a global var)
+	-- override orig console rules with mine (thank you devs for making it a global var)
 	ConsoleRules = {
 		-- print info in console log
 		{
 			-- $userdata/string id
 			"^$(.*)",
-			"print(ChoGGi_Funcs.Common.Translate(%s))"
+			"ConsolePrint(ChoGGi_Funcs.Common.Translate(%s))"
 		},
 		{
 			-- @function
 			"^@(.*)",
-			"print(ChoGGi_Funcs.Common.DebugGetInfo(%s))",
+			"ConsolePrint(ChoGGi_Funcs.Common.DebugGetInfo(%s))",
 		},
 		{
 			-- @@type
 			"^@@(.*)",
-			"print(type(%s))"
+			"ConsolePrint(type(%s))"
 		},
 
 		-- do stuff

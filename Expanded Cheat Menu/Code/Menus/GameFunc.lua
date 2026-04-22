@@ -1972,7 +1972,9 @@ function ChoGGi_Funcs.Menus.SetCameraLookatDist()
 end
 
 function ChoGGi_Funcs.Menus.SetCameraZoom()
-	local default_setting = ChoGGi.Consts.CameraZoomToggle or ChoGGi.UserSettings.CameraZoomToggle or 24000
+	-- where did this const come from?
+--~ 	local default_setting = ChoGGi.Consts.CameraZoomToggle or ChoGGi.UserSettings.CameraZoomToggle or 24000
+	local default_setting = ChoGGi.UserSettings.CameraZoomToggle or 24000
 	local item_list = {
 		{text = Translate(1000121--[[Default]]) .. ": " .. default_setting, value = default_setting},
 		{text = 16000, value = 16000},

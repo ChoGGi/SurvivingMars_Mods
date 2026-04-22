@@ -4,7 +4,9 @@ return {
 	PlaceObj("ModItemOptionToggle", {
 		"name", "SmokeParticles",
 		"DisplayName", T(0000, "Smoke Particles"),
-		"Help", T(0000, "Use this to turn off Smoke Particles from GHG/etc."),
+		"Help", T(0000, [[Use this to turn off Smoke Particles from GHG/etc.
+
+If in-game you need to toggle working state of smoking buildings.]]),
 		"DefaultValue", true,
 	}),
 	PlaceObj("ModItemOptionNumber", {

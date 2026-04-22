@@ -1,3 +1,7 @@
+v0.8
+Added compatibility for Indoor Polymer Factory (reuploaded).
+Changed MinValue to 10 so there's no more 11, 21, etc (thanks SoftwareSimian).
+
 v0.7
 Log spam.
 

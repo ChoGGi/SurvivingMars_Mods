@@ -11,7 +11,7 @@ local mod_options = {
 		"DisplayName", T(0000, " Auto Performance"),
 		"Help", T(0000, "Performance value when no colonists."),
 		"DefaultValue", 100,
-		"MinValue", 1,
+		"MinValue", 10,
 		"MaxValue", 1000,
 		"StepSize", 10,
 	}),
@@ -22,7 +22,7 @@ local g_Classes = g_Classes
 local BuildingTemplates = BuildingTemplates
 
 for id, item in pairs(BuildingTemplates) do
-	local cls_obj = g_Classes[item.template_class]
+	local cls_obj = g_Classes[item.id or item.template_class]
 	local is_factory = IsKindOf(cls_obj, "Factory")
 	local is_farm = IsKindOf(cls_obj, "Farm") or IsKindOf(cls_obj, "FungalFarm")
 	if is_factory or is_farm then
@@ -58,6 +58,8 @@ end
 AddBuilding("DroneFactory")
 -- No need to check for dlc, just check for nil in the func above
 AddBuilding("ReconCenter")
+-- Indoor Polymer Factory (reuploaded)
+AddBuilding("Indoor_PolymerPlant")
 
 local CmpLower = CmpLower
 local _InternalTranslate = _InternalTranslate

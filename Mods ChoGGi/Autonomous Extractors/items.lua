@@ -12,7 +12,7 @@ return {
 		"DisplayName", T(0000, "Auto Performance"),
 		"Help", T(0000, "Performance value when no colonists."),
 		"DefaultValue", 100,
-		"MinValue", 1,
+		"MinValue", 10,
 		"MaxValue", 1000,
 		"StepSize", 10,
 	}),
