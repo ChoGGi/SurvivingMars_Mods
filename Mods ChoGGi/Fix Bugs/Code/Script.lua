@@ -33,6 +33,11 @@ local g_AvailableDlc = g_AvailableDlc
 -- Fix for Silva's Orion Rocket mod (part 1/2, backing up the func he overrides)
 local ChoOrig_PlacePlanet = PlacePlanet
 
+--
+-- Workaround for function CargoTransporter:SpawnRovers()
+-- Someone fat fingered the r (fixed in SMR)
+emptry_table = empty_table
+
 -- Mod options
 local mod_EnableMod
 local mod_FarmOxygen
@@ -309,6 +314,11 @@ function OnMsg.OnRealmLoad()
 	-- Fine for what I'm changing though
 
 	--
+	-- UndergroundDeepScanning storybit never activates
+	StoryBits.UndergroundDeepScanning.Enabled = true
+	StoryBits.UndergroundDeepScanning.Enables = empty_table
+
+	--
 	--[[
 	Free Will: Violent Urges Solved never shows up after researching story bit tech
 	follow ups should be enabled by preceding bits
@@ -321,9 +331,11 @@ function OnMsg.OnRealmLoad()
 	StoryBits.FreeWill_2.Enabled = false
 	StoryBits.FreeWill_2.Category = "FollowUp"
 
+	--
 	-- Cure For Cancer: Rare Outcome never starts (1/2)
 	StoryBits.Cure4Cancer_RareOutcome.Category = "FollowUp"
 
+	--
 	-- Survey Offer Option 2: new research will be made available (1/2)
 	StoryBits.SurveyOffer_TechEffect.Enabled = false
 	StoryBits.SurveyOffer_TechEffect.Category = "FollowUp"
@@ -2759,6 +2771,8 @@ do -- RocketExpedition:KillExpedition()/RocketExpedition:Done()
 	end
 end
 
+--
+--
 --
 --
 --

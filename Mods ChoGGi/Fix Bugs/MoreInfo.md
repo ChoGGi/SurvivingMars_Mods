@@ -9,6 +9,7 @@ See mod options to toggle certain fixes.
 ### General bugs:
 ```
 Uneven terrain from Flatten tool (mod option to disable).
+CargoTransporter:SpawnRovers() can mess up (emptry_table).
 If an expedition fails (only from storybits?) then the rover doesn't get deleted.
 Log spam from RC Transports trying to unload resources when on expeditions.
 RC Harvester doesn't collect waste rock.
@@ -36,6 +37,7 @@ Toggling power to domes with passages in certain instances.
 
 ### Storybits (SPOILERS):
 ```
+UndergroundDeepScanning storybit never activates.
 Rare Anomaly Analyzed: Architecture shows sequence-50 instead of correct string.
 Underground bit Morale Boost has a misnamed reference.
 Long Winter Cold Wave timer can disappear at 4 Sols.

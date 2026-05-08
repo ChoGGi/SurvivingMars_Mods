@@ -1,3 +1,7 @@
+v12.3
+CargoTransporter:SpawnRovers() can mess up (Thanks VengefulAncient).
+UndergroundDeepScanning storybit never activates (Thanks Dark Master).
+
 v12.2
 Rare Anomaly Analyzed: Architecture shows sequence-50 instead of correct string (Thanks Dark Master).
 
