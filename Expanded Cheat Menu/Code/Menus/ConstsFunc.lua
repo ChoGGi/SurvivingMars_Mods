@@ -9,6 +9,17 @@ local MsgPopup = ChoGGi_Funcs.Common.MsgPopup
 local T = T
 local Translate = ChoGGi_Funcs.Common.Translate
 
+-- Anything needed to be called after Consts updated
+local function Req_Func_Updates(const_id, const_value)
+	-- Forces an update of GetSolAtmosphereDecay()/SetAtmosphereDecay()
+	if const_id == "Decay_AtmosphereSP_MagneticShield"
+		or const_id == "Decay_AtmosphereTP_Max"
+		or const_id == "Decay_AtmosphereTP_Min"
+	then
+		SavegameFixups.RestartAtmosphereDecayThread()
+	end
+end
+
 function ChoGGi_Funcs.Menus.SetConstMenu(action)
 	if not action then
 		return
@@ -69,6 +80,8 @@ function ChoGGi_Funcs.Menus.SetConstMenu(action)
 			else
 				ConstsUS[setting_id] = value
 			end
+
+			Req_Func_Updates(setting_id, value)
 
 			ChoGGi_Funcs.Settings.WriteSettings()
 			MsgPopup(

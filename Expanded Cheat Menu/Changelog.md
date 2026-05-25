@@ -5,6 +5,7 @@
 - Console> $, @, @@ didn't show any console text.
 - Research Remove: Superior Cables/Pipes (thanks ChocoNoodles).
 ### Changed:
+- Some Terraforming Consts (Menu>Cheats>Consts) don't do anything unless you manually update a thread (Thanks Ben).
 - Instant Mission Goals will allow you to complete failed goals.
 
 ## v19.8 (20 July 2025)
