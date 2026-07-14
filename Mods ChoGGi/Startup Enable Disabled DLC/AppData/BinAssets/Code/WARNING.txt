@@ -1,0 +1,3 @@
+Any lua files in here will be loaded as soon as the game starts.
+
+No limitations or blacklisting so be wary of anything you stick in here.

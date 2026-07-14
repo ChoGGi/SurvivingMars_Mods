@@ -1,0 +1,1 @@
+Any mod ids contained in these lua files will have the blacklist removed and a warning added.

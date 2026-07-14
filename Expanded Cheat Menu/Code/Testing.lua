@@ -470,7 +470,6 @@ function ChoGGi.testing.ExportBuildingFootprints()
 
 end
 
-
 local function Screenie(map)
 	-- a mystery without anything visible added to the ground
 	g_CurrentMissionParams.idMystery = "BlackCubeMystery"

@@ -86,10 +86,10 @@ local function StartupCode()
 	return true
 end
 
--- Don't update standing when loading saves
+-- Doesn't update standing when loading saves
 OnMsg.LoadGame = StartupCode
 
--- Update standing on new games
+-- Updates standing on new games
 function OnMsg.CityStart()
 	if StartupCode() then
 		-- Change standing to Good
